@@ -1,8 +1,20 @@
 // const express = require('express');
 // const serverless = require('serverless-http');
 
-import express from 'express';
 import serverless from 'serverless-http';
+
+import { PineconeClient } from "@pinecone-database/pinecone";
+import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
+import { TextLoader } from "langchain/document_loaders/fs/text";
+import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import * as dotenv from "dotenv";
+
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { OpenAI } from "langchain/llms/openai";
+import { loadQAStuffChain } from "langchain/chains";
+// import { queryPineconeVectorStoreAndQueryLLM } from "./queryPineconeAndQueryGPT.js";
+import express from 'express';
+import res from "express/lib/response.js";
 
 const app = express();
 const router = express.Router();
@@ -19,7 +31,7 @@ app.get('/', (req, res) => {
 // Async test
 async function fetchData() {
     // Simulating an asynchronous operation with a delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
   
     // Returning a value
     return 'Data fetched!';
@@ -28,14 +40,18 @@ async function fetchData() {
   async function main() {
     try {
       const result = await fetchData();
-      console.log(result);
+      console.log("Here");
+      return result;
     } catch (error) {
-      console.error('An error occurred:', error);
+      return 'An error occurred:' + error;
     }
   }
   
 app.get("/async", (req, res) => {
-    res.send(main());
+  (async () => {
+      var getData = await main()
+      res.send(getData);
+  })()
 })
 
 //Create new record
