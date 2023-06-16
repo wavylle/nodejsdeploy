@@ -16,6 +16,28 @@ app.get('/', (req, res) => {
   res.send('App is running..');
 });
 
+// Async test
+async function fetchData() {
+    // Simulating an asynchronous operation with a delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  
+    // Returning a value
+    return 'Data fetched!';
+  }
+  
+  async function main() {
+    try {
+      const result = await fetchData();
+      console.log(result);
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+  
+app.get("/async", (req, res) => {
+    res.send(main());
+})
+
 //Create new record
 app.post('/add', (req, res) => {
   res.send('New record added.');
