@@ -26,7 +26,7 @@ await client.init({
 
 export async function paConvInit(foldername, question) {
 
-    const loader = new DirectoryLoader(`./documents/${foldername}`, {
+    const loader = new DirectoryLoader(`/documents/${foldername}`, {
         ".txt": (path) => new TextLoader(path),
         ".pdf": (path) => new PDFLoader(path),
     });
