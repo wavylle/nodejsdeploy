@@ -38,12 +38,12 @@ async function fetchTextData(file_url) {
 
 export async function paConvInit(file_url, question) {
     console.log("GOT HERE");
-    const loader = new DirectoryLoader(`./documents/datafolder`, {
-        ".txt": (path) => new TextLoader(path),
-        ".pdf": (path) => new PDFLoader(path),
-    });
+    // const loader = new DirectoryLoader(`./documents/datafolder`, {
+    //     ".txt": (path) => new TextLoader(path),
+    //     ".pdf": (path) => new PDFLoader(path),
+    // });
   
-    const docs = await loader.load();
+    // const docs = await loader.load();
   
   // var docs = ''
   //     await fetch(file_url)
@@ -55,9 +55,9 @@ export async function paConvInit(file_url, question) {
   //     })
 
       // const docs = await fetchTextData(file_url)
-    console.log("Docs: ", docs);
+    // console.log("Docs: ", docs);
 
-    await updatePinecone(client, indexName, docs, file_url);
+    await updatePinecone(client, indexName, file_url);
     var myData = await queryPineconeVectorStoreAndQueryLLM(client, indexName, question);
 
     return myData

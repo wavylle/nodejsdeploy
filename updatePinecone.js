@@ -10,7 +10,7 @@ function getRandomInt(min, max) {
 }
 
 
-export const updatePinecone = async (client, indexName, docs, file_url) => {
+export const updatePinecone = async (client, indexName, file_url) => {
   console.log("Retrieving Pinecone index...");
 // 3. Retrieve Pinecone index
   const index = client.Index(indexName);
