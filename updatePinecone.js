@@ -2,17 +2,33 @@
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 // 2. Export updatePinecone function
-export const updatePinecone = async (client, indexName, docs) => {
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+export const updatePinecone = async (client, indexName, docs, file_url) => {
   console.log("Retrieving Pinecone index...");
 // 3. Retrieve Pinecone index
   const index = client.Index(indexName);
 // 4. Log the retrieved index name
   console.log(`Pinecone index retrieved: ${indexName}`);
 // 5. Process each document in the docs array
-  for (const doc of docs) {
-    console.log(`Processing document: ${doc.metadata.source}`);
-    const txtPath = doc.metadata.source;
-    const text = doc.pageContent;
+  // for (const doc of docs) {
+    // console.log(`Processing document: ${doc.metadata.source}`);
+  
+  console.log("Fetching file from: ", file_url)
+    const txtPath = String(getRandomInt(1000, 9999));
+    var text = ''
+    await fetch(file_url).then(res => res.text()).then(data => {
+      text = data
+    })
+
+    // const text = doc.pageContent;
+    console.log("Got text: ", text);
 // 6. Create RecursiveCharacterTextSplitter instance
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
@@ -61,5 +77,5 @@ export const updatePinecone = async (client, indexName, docs) => {
     }
 // 10. Log the number of vectors updated
     console.log(`Pinecone index updated with ${chunks.length} vectors`);
-  }
+  // }
 };

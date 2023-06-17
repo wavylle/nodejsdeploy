@@ -30,9 +30,9 @@ app.get('/', (req, res) => {
 //Create new record
 app.post('/add', (req, res) => {
   (async () => {    
-    const { foldername, question } = req.body;
+    const { file_url, question } = req.body;
     
-    const retData = await paConvInit(foldername, question)
+    const retData = await paConvInit(file_url, question)
     
     res.send(retData);
   })()
@@ -62,7 +62,7 @@ app.get('/demo', (req, res) => {
 // app.use('/.netlify/functions/api', router);
 // export const handler = serverless(app);
 
-const port = 8000
+const port = 5000
 
 app.listen(port, () => {
   console.log(`Server is working on port ${port}`);

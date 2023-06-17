@@ -24,15 +24,40 @@ await client.init({
   environment: process.env.PINECONE_ENVIRONMENT,
 });
 
-export async function paConvInit(foldername, question) {
+async function fetchTextData(file_url) {
+  console.log("Fetching text data...");
+ await fetch(file_url)
+  .then(response => response.text())
+  .then(data => {
+      // Here, 'data' variable contains the contents of the text file
+    console.log("DATA: ", data);
+    return data
+  })
+}
 
-    const loader = new DirectoryLoader(`documents/${foldername}`, {
+
+export async function paConvInit(file_url, question) {
+    console.log("GOT HERE");
+    const loader = new DirectoryLoader(`./documents/datafolder`, {
         ".txt": (path) => new TextLoader(path),
         ".pdf": (path) => new PDFLoader(path),
     });
+  
     const docs = await loader.load();
+  
+  // var docs = ''
+  //     await fetch(file_url)
+  //     .then(response => response.text())
+  //       .then(data => {
+  //       docs = data
+  //       // Here, 'data' variable contains the contents of the text file
+  //       console.log("DATA 2: ", data);
+  //     })
 
-    await updatePinecone(client, indexName, docs);
+      // const docs = await fetchTextData(file_url)
+    console.log("Docs: ", docs);
+
+    await updatePinecone(client, indexName, docs, file_url);
     var myData = await queryPineconeVectorStoreAndQueryLLM(client, indexName, question);
 
     return myData
