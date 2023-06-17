@@ -41,6 +41,7 @@ export const updatePinecone = async (client, indexName, file_url) => {
       `Calling OpenAI's Embedding endpoint documents with ${chunks.length} text chunks ...`
     );
 // 8. Create OpenAI embeddings for documents
+  console.log("Embedding Arrays...")
     const embeddingsArrays = await new OpenAIEmbeddings().embedDocuments(
       chunks.map((chunk) => chunk.pageContent.replace(/\n/g, " "))
     );
