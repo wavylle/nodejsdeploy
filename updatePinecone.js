@@ -46,6 +46,34 @@ export const updatePinecone = async (client, indexName, file_url) => {
     const embeddingsArrays = await new OpenAIEmbeddings().embedDocuments(
       chunks.map((chunk) => chunk.pageContent.replace(/\n/g, " "))
     );
+
+    // 9. Create and upsert vectors in batches of 100
+    const batchSize = 100;
+    let batch = [];
+    for (let idx = 0; idx < chunks.length; idx++) {
+      const chunk = chunks[idx];
+      const vector = {
+        id: `${txtPath}_${idx}`,
+        values: embeddingsArrays[idx],
+        metadata: {
+          ...chunk.metadata,
+          loc: JSON.stringify(chunk.metadata.loc),
+          pageContent: chunk.pageContent,
+          txtPath: txtPath,
+        },
+      };
+      batch.push(vector);
+      // When batch is full or it's the last item, upsert the vectors
+      if (batch.length === batchSize || idx === chunks.length - 1) {
+        await index.upsert({
+          upsertRequest: {
+            vectors: batch,
+          },
+        });
+        // Empty the batch
+        batch = [];
+      }
+    }
     // Rest of your code that depends on the embeddingsArrays
   } catch (error) {
     console.error('Error occurred during embedding:', error);
@@ -56,33 +84,6 @@ export const updatePinecone = async (client, indexName, file_url) => {
     console.log(
       `Creating ${chunks.length} vectors array with id, values, and metadata...`
     );
-// 9. Create and upsert vectors in batches of 100
-    const batchSize = 100;
-    let batch = [];
-    // for (let idx = 0; idx < chunks.length; idx++) {
-    //   const chunk = chunks[idx];
-    //   const vector = {
-    //     id: `${txtPath}_${idx}`,
-    //     values: embeddingsArrays[idx],
-    //     metadata: {
-    //       ...chunk.metadata,
-    //       loc: JSON.stringify(chunk.metadata.loc),
-    //       pageContent: chunk.pageContent,
-    //       txtPath: txtPath,
-    //     },
-    //   };
-    //   batch.push(vector);
-    //   // When batch is full or it's the last item, upsert the vectors
-    //   if (batch.length === batchSize || idx === chunks.length - 1) {
-    //     await index.upsert({
-    //       upsertRequest: {
-    //         vectors: batch,
-    //       },
-    //     });
-    //     // Empty the batch
-    //     batch = [];
-    //   }
-    // }
 // 10. Log the number of vectors updated
     console.log(`Pinecone index updated with ${chunks.length} vectors`);
   // }
