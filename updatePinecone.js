@@ -42,12 +42,14 @@ export const updatePinecone = async (client, indexName, file_url) => {
     );
 // 8. Create OpenAI embeddings for documents
   console.log("Embedding Arrays...")
-  try {
     const embeddingsArrays = await new OpenAIEmbeddings().embedDocuments(
       chunks.map((chunk) => chunk.pageContent.replace(/\n/g, " "))
     );
-
-    // 9. Create and upsert vectors in batches of 100
+    console.log("Finished embedding documents");
+    console.log(
+      `Creating ${chunks.length} vectors array with id, values, and metadata...`
+    );
+// 9. Create and upsert vectors in batches of 100
     const batchSize = 100;
     let batch = [];
     for (let idx = 0; idx < chunks.length; idx++) {
@@ -74,16 +76,6 @@ export const updatePinecone = async (client, indexName, file_url) => {
         batch = [];
       }
     }
-    // Rest of your code that depends on the embeddingsArrays
-  } catch (error) {
-    console.error('Error occurred during embedding:', error);
-    // Handle the error appropriately (e.g., log, notify, or fallback behavior)
-  }
-  
-    console.log("Finished embedding documents");
-    console.log(
-      `Creating ${chunks.length} vectors array with id, values, and metadata...`
-    );
 // 10. Log the number of vectors updated
     console.log(`Pinecone index updated with ${chunks.length} vectors`);
   // }
